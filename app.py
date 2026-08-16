@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom Styling (Professional Look)
+# Custom Styling (Dark Mode + White Text Fix)
 st.markdown("""
 <style>
     .stApp {
@@ -31,6 +31,16 @@ st.markdown("""
         color: #9CA3AF;
         font-size: 1rem;
         margin-bottom: 2rem;
+    }
+    /* Typing Keyboard Text Color Fix */
+    input[type="text"], textarea, .stChatInput input {
+        color: #FFFFFF !important;
+        background-color: #1F2937 !important;
+        caret-color: #FFFFFF !important;
+    }
+    /* Placeholder Text Fix */
+    input::placeholder, textarea::placeholder {
+        color: #9CA3AF !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -66,17 +76,12 @@ if mode == "💬 Chat Assistant":
             st.markdown(prompt)
 
         if not gemini_key:
-            bot_reply = "API Key setup nahi hai bhai! Check Streamlit Secrets."
+            bot_reply = "API Key missing hai bhai! Streamlit Secrets me GEMINI_API_KEY check karo."
         else:
             try:
-                # Primary & Fallback Models
-                try:
-                    model = genai.GenerativeModel("gemini-1.5-flash")
-                    response = model.generate_content(prompt)
-                except Exception:
-                    model = genai.GenerativeModel("gemini-pro")
-                    response = model.generate_content(prompt)
-
+                # Latest Fast Model 2.0 Flash
+                model = genai.GenerativeModel("gemini-2.0-flash")
+                response = model.generate_content(prompt)
                 bot_reply = response.text
             except Exception as e:
                 bot_reply = f"Error: {str(e)}"
