@@ -18,6 +18,5 @@ else:
             try:
                 response = model.generate_content(prompt)
                 st.chat_message("assistant").markdown(response.text)
-            except Exception as e:
-                st.error(f"Error: {e}")
+            except Exception as e
                 
