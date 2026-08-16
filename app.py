@@ -1,4 +1,5 @@
 import streamlit as st
+import google.generativeai as genaiimport streamlit as st
 import google.generativeai as genai
 
 st.title("MeroAI Assistant ⚡")
