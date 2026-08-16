@@ -2,6 +2,8 @@ import streamlit as st
 import google.generativeai as genai
 import replicate
 import os
+from gtts import gTTS
+import io
 
 # Page Setup
 st.set_page_config(
@@ -47,7 +49,7 @@ st.sidebar.title("⚡ MeroAI Control")
 mode = st.sidebar.radio("Mode Select Karo:", ["💬 Chat Assistant", "🎨 Image Generator", "🎬 Video Generator"])
 
 st.markdown('<div class="main-header">MeroAI</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-header">Your Powerful AI Companion</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-header">Your Powerful AI Companion (Created by Danish)</div>', unsafe_allow_html=True)
 
 # 1. Chat Assistant Mode
 if mode == "💬 Chat Assistant":
@@ -64,17 +66,32 @@ if mode == "💬 Chat Assistant":
             st.markdown(prompt)
 
         if not gemini_key:
-            bot_reply = "API Key setup nahi hai bhai!"
+            bot_reply = "API Key setup nahi hai bhai! Check Streamlit Secrets."
         else:
             try:
-                model = genai.GenerativeModel("gemini-1.5-flash")
-                response = model.generate_content(prompt)
+                # Primary & Fallback Models
+                try:
+                    model = genai.GenerativeModel("gemini-1.5-flash")
+                    response = model.generate_content(prompt)
+                except Exception:
+                    model = genai.GenerativeModel("gemini-pro")
+                    response = model.generate_content(prompt)
+
                 bot_reply = response.text
             except Exception as e:
                 bot_reply = f"Error: {str(e)}"
 
         with st.chat_message("assistant"):
             st.markdown(bot_reply)
+            # Text-To-Speech (TTS) Voice
+            try:
+                tts = gTTS(text=bot_reply[:300], lang='hi', slow=False)
+                sound_file = io.BytesIO()
+                tts.write_to_fp(sound_file)
+                st.audio(sound_file, format='audio/mp3')
+            except Exception:
+                pass
+
         st.session_state.messages.append({"role": "assistant", "content": bot_reply})
 
 # 2. Image Generator Mode
